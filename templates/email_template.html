@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>PayTroix Waitlist</title>
+  <title>Welcome to PayTrois Waitlist</title>
 </head>
 <body style="
     margin: 0;
     padding: 0;
     background-color: #0a1128;
-    /* two-layered grid: faint minor lines every 20px, slightly stronger major lines every 80px */
     background-image:
       repeating-linear-gradient(0deg,
         rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px,
@@ -26,90 +25,103 @@
         rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 1px,
         transparent 1px, transparent 80px
       );
-    background-size: auto;
   ">
   <div style="
       max-width: 600px;
       margin: 0 auto;
       padding: 60px 20px;
-      font-family: Arial, sans-serif;
       text-align: center;
+      font-family: Arial, sans-serif;
     ">
     
-    <!-- Heading -->
+    <!-- Title/Header -->
     <h1 style="
         color: #3C8EFF;
         font-size: 32px;
         line-height: 1.2;
         text-transform: uppercase;
-        margin: 0 0 30px;
+        margin: 0 0 25px;
+        text-align: left;
       ">
-      Welcome to<br>The Future of HR
+      PayTrois
     </h1>
 
-    <!-- Content wrapper -->
+    <!-- Content box -->
     <div style="
-        background-color: rgba(19, 26, 54, 0.95);
-        border: 1px solid rgba(60, 142, 255, 0.5);
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-        padding: 40px 30px;
+        background-color: rgba(19,26,54,0.95);
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.6);
+        padding: 35px 25px;
+        display: inline-block;
+        text-align: left;
       ">
       
-      <!-- Intro text -->
+      <!-- Greeting -->
       <p style="
           color: #ffffff;
-          font-size: 16px;
-          line-height: 24px;
+          font-size: 18px;
+          line-height: 28px;
           margin: 0 0 20px;
         ">
-        Thank you for your interest in our innovative payroll system. Your request has been received, and you’re now on our exclusive waitlist!
+        Hi {{name}},<br><br>
+        Thank you for signing up for the PayTrois waitlist! 🎉<br>
+        We’re thrilled to have you join our community of forward-thinking payroll innovators.
       </p>
+      
+      <!-- Introduction -->
       <p style="
           color: #ffffff;
-          font-size: 16px;
-          line-height: 24px;
-          margin: 0 0 30px;
+          font-size: 18px;
+          line-height: 28px;
+          margin: 0 0 15px;
         ">
-        Our cutting-edge HR solution brings security, transparency, and efficiency to payroll management, and we can’t wait to show you what’s next. By harnessing blockchain technology, we are transforming the way businesses handle payroll.
-    </p>
+        With PayTrois, you’ll enjoy:
+      </p>
 
-      <!-- Button -->
-      <a href="#"
-         style="
-           display: inline-block;
-           padding: 12px 32px;
-           border: 2px solid #3C8EFF;
-           border-radius: 4px;
-           color: #ffffff;
-           text-decoration: none;
-           font-size: 14px;
-           font-weight: bold;
-           text-transform: uppercase;
-           margin-bottom: 30px;
-         ">
-        Join the Waitlist
-      </a>
-
-      <!-- Closing text -->
-      <p style="
+      <!-- Highlights -->
+      <ul style="
           color: #ffffff;
-          font-size: 16px;
-          line-height: 24px;
+          font-size: 18px;
+          line-height: 28px;
+          margin: 0 0 20px;
+          padding-left: 22px;
+        ">
+        <li>Effortless, secure payroll powered by blockchain</li>
+        <li>Borderless payments with instant settlement</li>
+        <li>AI-driven insights to optimize your payroll spend</li>
+      </ul>
+      
+      <!-- Fainter, smaller “Cheers” -->
+      <p style="
+          color: rgba(255,255,255,0.6);
+          font-size: 14px;
+          line-height: 20px;
           margin: 0 0 20px;
         ">
-        We’re excited to have you on this journey with us. Get ready to experience payroll like never before. Stay tuned for updates!
+        Cheers,<br>
+        The PayTrois Team
+      </p>
+      
+      <!-- Footer disclaimer -->
+      <p style="
+          font-size: 12px;
+          color: #AAAAAA;
+          line-height: 18px;
+          margin: 0 0 5px;
+        ">
+        You’re receiving this email because you signed up for the PayTrois waitlist. If this doesn’t seem right, you can disregard this message.
       </p>
       <p style="
-          color: #ffffff;
-          font-size: 16px;
-          line-height: 24px;
+          font-size: 12px;
+          color: #AAAAAA;
+          line-height: 18px;
           margin: 0;
         ">
-        Best Regards,<br>
-        The PayTroix Team
+        Don’t want more emails? <a href="#" style="color:#3C8EFF; text-decoration:none;">Unsubscribe</a>.
       </p>
+      
     </div>
+    
   </div>
 </body>
 </html>
