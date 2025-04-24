@@ -9,15 +9,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
-
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiParameter,
-    OpenApiResponse,
-    OpenApiExample,
-)
 from .models import WaitlistEntry
 from .serializers import WaitlistEntrySerializer
+from django.db import transaction
 
 
 class WaitlistAPIView(ModelViewSet):
@@ -38,26 +32,27 @@ class WaitlistAPIView(ModelViewSet):
         """
         Save the new waitlist entry and send a confirmation email.
         """
-        if serializer.is_valid():
-            email = serializer.validated_data["email"]
-            # Check if email already exists but not confirmed
-            existing = WaitlistEntry.objects.filter(email=email).first()
-            if existing and not existing.confirmed:
-                # Resend confirmation email
-                self.send_confirmation_email(existing)
-                return Response(
-                    {"message": "Confirmation email resent. Please check your inbox."},
-                    status=status.HTTP_200_OK,
-                )
-            elif existing and existing.confirmed:
-                # Already confirmed
-                return Response(
-                    {"message": "This email is already on our waitlist."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        with transaction.atomic():
+            if serializer.is_valid():
+                email = serializer.validated_data["email"]
+                # Check if email already exists but not confirmed
+                existing = WaitlistEntry.objects.filter(email=email).first()
+                if existing and not existing.confirmed:
+                    # Resend confirmation email
+                    self.send_confirmation_email(existing)
+                    return Response(
+                        {"message": "Confirmation email resent. Please check your inbox."},
+                        status=status.HTTP_200_OK,
+                    )
+                elif existing and existing.confirmed:
+                    # Already confirmed
+                    return Response(
+                        {"message": "This email is already on our waitlist."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        entry = serializer.save()
-        self.send_confirmation_email(entry)
+            entry = serializer.save()
+            self.send_confirmation_email(entry)
 
 
     def send_confirmation_email(self, entry):

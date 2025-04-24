@@ -1,0 +1,184 @@
+openapi: 3.0.3
+info:
+  title: HR Backend API
+  version: 1.0.0
+  description: API for managing HR operations
+paths:
+  /api/v1/waitlist/waitlist/:
+    get:
+      operationId: waitlist_waitlist_list
+      tags:
+      - waitlist
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WaitlistEntry'
+          description: ''
+    post:
+      operationId: waitlist_waitlist_create
+      description: Create a new waitlist entry.
+      tags:
+      - waitlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WaitlistEntry'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WaitlistEntry'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WaitlistEntry'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WaitlistEntry'
+          description: ''
+  /api/v1/waitlist/waitlist/{id}/:
+    get:
+      operationId: waitlist_waitlist_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this waitlist entry.
+        required: true
+      tags:
+      - waitlist
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WaitlistEntry'
+          description: ''
+    put:
+      operationId: waitlist_waitlist_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this waitlist entry.
+        required: true
+      tags:
+      - waitlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WaitlistEntry'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WaitlistEntry'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WaitlistEntry'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WaitlistEntry'
+          description: ''
+    patch:
+      operationId: waitlist_waitlist_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this waitlist entry.
+        required: true
+      tags:
+      - waitlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWaitlistEntry'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWaitlistEntry'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWaitlistEntry'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WaitlistEntry'
+          description: ''
+    delete:
+      operationId: waitlist_waitlist_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this waitlist entry.
+        required: true
+      tags:
+      - waitlist
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    PatchedWaitlistEntry:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+    WaitlistEntry:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
