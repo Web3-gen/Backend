@@ -44,9 +44,14 @@ INSTALLED_APPS = [
 
     # Custom Apps
     'waitlist.apps.WaitlistConfig',
+    'web3auth.apps.Web3AuthConfig',
+    'user_profile.apps.UserProfileConfig',
+
+    # Third-party apps
     'corsheaders',
     'rest_framework',
     'drf_spectacular',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -162,6 +167,9 @@ SPECTACULAR_SETTINGS = {
 
 # DRF settings
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
@@ -177,5 +185,7 @@ DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER")
 EMAIL_LOGO_URL = os.path.join(BASE_DIR, "staticfiles/images/image.png")
 EMAIL_LOGO_URL = ''
 DEFAULT_FROM_EMAIL = 'hrpayrollcxxii@gmail.com'
+
+AUTH_USER_MODEL = 'web3auth.User'
 
 CORS_ALLOW_ALL_ORIGINS = True
