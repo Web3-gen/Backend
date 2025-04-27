@@ -4,14 +4,341 @@ info:
   version: 1.0.0
   description: API for managing HR operations
 paths:
+  /api/v1/profile/organization-profile/:
+    get:
+      operationId: profile_organization_profile_list
+      description: Viewset for handling organization profile operations.
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrganizationProfile'
+          description: ''
+    post:
+      operationId: profile_organization_profile_create
+      description: Viewset for handling organization profile operations.
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationProfile'
+          description: ''
+  /api/v1/profile/organization-profile/{id}/:
+    get:
+      operationId: profile_organization_profile_retrieve
+      description: Viewset for handling organization profile operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization profile.
+        required: true
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationProfile'
+          description: ''
+    put:
+      operationId: profile_organization_profile_update
+      description: Viewset for handling organization profile operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization profile.
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationProfile'
+          description: ''
+    patch:
+      operationId: profile_organization_profile_partial_update
+      description: Viewset for handling organization profile operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization profile.
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationProfile'
+          description: ''
+    delete:
+      operationId: profile_organization_profile_destroy
+      description: Viewset for handling organization profile operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization profile.
+        required: true
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/profile/recipient-profile/:
+    get:
+      operationId: profile_recipient_profile_list
+      description: Viewset for handling recipient profile operations.
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipientProfile'
+          description: ''
+    post:
+      operationId: profile_recipient_profile_create
+      description: Viewset for handling recipient profile operations.
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipientProfile'
+          description: ''
+  /api/v1/profile/recipient-profile/{id}/:
+    get:
+      operationId: profile_recipient_profile_retrieve
+      description: Viewset for handling recipient profile operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recipient profile.
+        required: true
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipientProfile'
+          description: ''
+    put:
+      operationId: profile_recipient_profile_update
+      description: Viewset for handling recipient profile operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recipient profile.
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipientProfile'
+          description: ''
+    patch:
+      operationId: profile_recipient_profile_partial_update
+      description: Viewset for handling recipient profile operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recipient profile.
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRecipientProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRecipientProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRecipientProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipientProfile'
+          description: ''
+    delete:
+      operationId: profile_recipient_profile_destroy
+      description: Viewset for handling recipient profile operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recipient profile.
+        required: true
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/profile/recipient-profile/{id}/batch_create/:
+    post:
+      operationId: profile_recipient_profile_batch_create_create
+      description: Create multiple recipient profiles in a single request.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this recipient profile.
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipientProfile'
+          description: ''
   /api/v1/waitlist/waitlist/:
     get:
       operationId: waitlist_waitlist_list
       tags:
       - waitlist
       security:
-      - cookieAuth: []
-      - basicAuth: []
+      - jwtAuth: []
       - {}
       responses:
         '200':
@@ -40,8 +367,7 @@ paths:
               $ref: '#/components/schemas/WaitlistEntry'
         required: true
       security:
-      - cookieAuth: []
-      - basicAuth: []
+      - jwtAuth: []
       - {}
       responses:
         '201':
@@ -63,8 +389,7 @@ paths:
       tags:
       - waitlist
       security:
-      - cookieAuth: []
-      - basicAuth: []
+      - jwtAuth: []
       - {}
       responses:
         '200':
@@ -97,8 +422,7 @@ paths:
               $ref: '#/components/schemas/WaitlistEntry'
         required: true
       security:
-      - cookieAuth: []
-      - basicAuth: []
+      - jwtAuth: []
       - {}
       responses:
         '200':
@@ -130,8 +454,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedWaitlistEntry'
       security:
-      - cookieAuth: []
-      - basicAuth: []
+      - jwtAuth: []
       - {}
       responses:
         '200':
@@ -152,20 +475,202 @@ paths:
       tags:
       - waitlist
       security:
-      - cookieAuth: []
-      - basicAuth: []
+      - jwtAuth: []
       - {}
       responses:
         '204':
           description: No response body
+  /api/v1/web3auth/login/:
+    post:
+      operationId: web3auth_login_create
+      tags:
+      - web3auth
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/web3auth/nonce/{address}/:
+    get:
+      operationId: web3auth_nonce_retrieve
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - web3auth
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/web3auth/user/:
+    get:
+      operationId: web3auth_user_retrieve
+      tags:
+      - web3auth
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
 components:
   schemas:
+    OrganizationProfile:
+      type: object
+      description: Serializer for OrganizationProfile model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        organization_address:
+          type: string
+          nullable: true
+        organization_phone:
+          type: string
+          nullable: true
+          maxLength: 15
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - email
+      - id
+      - name
+      - recipients
+      - updated_at
+    PatchedOrganizationProfile:
+      type: object
+      description: Serializer for OrganizationProfile model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        organization_address:
+          type: string
+          nullable: true
+        organization_phone:
+          type: string
+          nullable: true
+          maxLength: 15
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedRecipientProfile:
+      type: object
+      description: Serializer for RecipientProfile model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        organization:
+          type: integer
+        recipient_ethereum_address:
+          type: string
+          maxLength: 42
+        recipient_phone:
+          type: string
+          nullable: true
+          maxLength: 15
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
     PatchedWaitlistEntry:
       type: object
       properties:
         email:
           type: string
           format: email
+    RecipientProfile:
+      type: object
+      description: Serializer for RecipientProfile model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        organization:
+          type: integer
+        recipient_ethereum_address:
+          type: string
+          maxLength: 42
+        recipient_phone:
+          type: string
+          nullable: true
+          maxLength: 15
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - email
+      - id
+      - name
+      - organization
+      - recipient_ethereum_address
+      - updated_at
     WaitlistEntry:
       type: object
       properties:
@@ -175,10 +680,7 @@ components:
       required:
       - email
   securitySchemes:
-    basicAuth:
+    jwtAuth:
       type: http
-      scheme: basic
-    cookieAuth:
-      type: apiKey
-      in: cookie
-      name: sessionid
+      scheme: bearer
+      bearerFormat: JWT
