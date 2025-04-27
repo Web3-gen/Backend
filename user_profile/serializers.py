@@ -9,11 +9,12 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
     Serializer for RecipientProfile model.
     """
 
-    model = RecipientProfile
-    fields = ['id', 'name', 'email', 'organization', 'recipient_ethereum_address', 
-                'recipient_phone', 'created_at', 'updated_at']
-    read_only_fields = ['id', 'created_at', 'updated_at']
-    
+    class Meta:
+        model = RecipientProfile
+        fields = ['id', 'name', 'email', 'organization', 'recipient_ethereum_address', 
+                    'recipient_phone', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
     def to_representation(self, instance):
         """
         Customize the representation of the RecipientProfile instance.
