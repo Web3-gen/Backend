@@ -12,7 +12,7 @@ User = get_user_model()
 class NonceView(APIView):
     permission_classes = [AllowAny]
     
-    def get(self, request, address, user_type):
+    def get(self, request, address):
         # Generate a random nonce
         alphabet = string.ascii_letters + string.digits
         nonce = ''.join(secrets.choice(alphabet) for i in range(32))
@@ -22,7 +22,7 @@ class NonceView(APIView):
             wallet_address__iexact=address,
             defaults={
                 'wallet_address': address.lower(),
-                'user_type': user_type,
+                'user_type': 'organization',
                 'username': address.lower(),
                 'nonce': nonce
             }

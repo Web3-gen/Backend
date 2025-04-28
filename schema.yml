@@ -518,6 +518,23 @@ paths:
       responses:
         '200':
           description: No response body
+  /api/v1/web3auth/verify-address/{address}/:
+    get:
+      operationId: web3auth_verify_address_retrieve
+      parameters:
+      - in: path
+        name: address
+        schema:
+          type: string
+        required: true
+      tags:
+      - web3auth
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
 components:
   schemas:
     OrganizationProfile:
