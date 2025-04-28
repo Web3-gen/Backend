@@ -22,6 +22,9 @@ class OrganizationProfileView(ModelViewSet):
         by filtering against a `user` query parameter in the URL.
         """
         return super().get_queryset().filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class RecipientProfileView(ModelViewSet):
@@ -48,3 +51,6 @@ class RecipientProfileView(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
