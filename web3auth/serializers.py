@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 class EthereumAuthSerializer(serializers.Serializer):
-    address = serializers.CharField()
-    signature = serializers.CharField()
+    address = serializers.CharField(required=True)
+    signature = serializers.CharField(required=True)
 
     def validate(self, data):
         address = data['address'].lower()
