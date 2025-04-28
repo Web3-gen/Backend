@@ -7,6 +7,7 @@ from django.conf import settings
 import secrets
 import string
 import logging
+from rest_framework_simplejwt.tokens import RefreshToken
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -57,17 +58,20 @@ class EthereumAuthSerializer(serializers.Serializer):
         user.nonce = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
         user.save()
         
-        # Generate JWT token
-        payload = {
-            'user_id': user.id,
-            'address': user.wallet_address,
-            'username': user.get_username()
-        }
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+        # # Generate JWT token
+        # payload = {
+        #     'user_id': user.id,
+        #     'address': user.wallet_address,
+        #     'username': user.get_username()
+        # }
+        # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+        refresh = RefreshToken.for_user(user)
+        refresh['address'] = user.wallet_address
         
         return {
             'user': user,
-            'token': token
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
         }
 
 class UserSerializer(serializers.ModelSerializer):
