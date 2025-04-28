@@ -43,7 +43,6 @@ class EthereumLoginView(APIView):
         
         validated_data = serializer.validated_data
         user = validated_data['user']
-        token = validated_data['token']
 
         if user is None:
             return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
@@ -52,8 +51,8 @@ class EthereumLoginView(APIView):
         
         return Response({
             'user': user_serializer.data,
-            'token': token,
-            
+            'refresh': validated_data['refresh'],
+            'access': validated_data['access']
         })
 
 class UserDetailView(APIView):
