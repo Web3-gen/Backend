@@ -22,11 +22,10 @@ class EthereumAuthSerializer(serializers.Serializer):
         try:
             user = User.objects.get(wallet_address__iexact=address)
         except User.DoesNotExist:
-            # Create new web3 user
-            user = User.objects.create_user(
-                wallet_address=address.lower(),
-                username=address.lower()
-            )
+            return {
+                'user': None,
+                'token': None
+            }
         
         # Verify the signature
         message = f"I'm signing my one-time nonce: {user.nonce}"
@@ -67,4 +66,4 @@ class EthereumAuthSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'wallet_address')
+        fields = ('id', 'username', 'wallet_address', 'user_type')
