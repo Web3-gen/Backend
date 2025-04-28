@@ -1,13 +1,14 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import User
-from eth_account.messages import defunct_hash_message
+from eth_account.messages import encode_defunct
 from eth_account import Account
 import jwt
 from django.conf import settings
 import secrets
 import string
+import logging
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 class EthereumAuthSerializer(serializers.Serializer):
@@ -15,39 +16,45 @@ class EthereumAuthSerializer(serializers.Serializer):
     signature = serializers.CharField()
 
     def validate(self, data):
-        address = data.get('address')
-        signature = data.get('signature')
-
-        # Get or create user
+        address = data['address'].lower()
+        signature = data['signature']
+        
+        # Get user with case-insensitive match
         try:
             user = User.objects.get(wallet_address__iexact=address)
         except User.DoesNotExist:
-            return {
-                'user': None,
-                'token': None
-            }
+            logger.warning(f"User with address {address} not found")
+            return {'user': None, 'token': None}
         
-        # Verify the signature
+        # Prepare the exact message that was signed
         message = f"I'm signing my one-time nonce: {user.nonce}"
+        logger.debug(f"Verifying message: {message}")
         
         try:
-            # Hash the message
-            message_hash = defunct_hash_message(text=message)
-            # Recover the address from the signature
+            # Use encode_defunct for text messages
+            message_hash = encode_defunct(text=message)
+            
+            # Recover the address
             recovered_address = Account.recover_message(
                 message_hash,
                 signature=signature
             ).lower()
-        except:
-            raise serializers.ValidationError("Invalid signature or message.")
+            
+            logger.debug(f"Recovered address: {recovered_address}, Expected: {address}")
+            
+            if recovered_address != address:
+                logger.error("Address mismatch in signature verification")
+                raise serializers.ValidationError("Address and signature don't match.")
+                
+        except ValueError as e:
+            logger.error(f"Signature verification failed: {str(e)}")
+            raise serializers.ValidationError("Invalid signature or message.") from e
+        except Exception as e:
+            logger.error(f"Unexpected error during verification: {str(e)}")
+            raise serializers.ValidationError("Signature verification failed.") from e
         
-        # Check if the recovered address matches the provided address
-        if recovered_address != address.lower():
-            raise serializers.ValidationError("Address and signature don't match.")
-        
-        # Generate a new nonce for next login
-        alphabet = string.ascii_letters + string.digits
-        user.nonce = ''.join(secrets.choice(alphabet) for i in range(32))
+        # Update nonce for future logins
+        user.nonce = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
         user.save()
         
         # Generate JWT token

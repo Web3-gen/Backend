@@ -53,6 +53,7 @@ class EthereumLoginView(APIView):
         return Response({
             'user': user_serializer.data,
             'token': token,
+            
         })
 
 class UserDetailView(APIView):
