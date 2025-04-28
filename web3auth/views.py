@@ -41,7 +41,7 @@ class EthereumLoginView(APIView):
         serializer = EthereumAuthSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        validated_data = serializer.validate(serializer.validated_data)
+        validated_data = serializer.validated_data
         user = validated_data['user']
         token = validated_data['token']
 
