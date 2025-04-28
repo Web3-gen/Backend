@@ -1,70 +1,80 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import User
-from eth_account.messages import defunct_hash_message
+from eth_account.messages import encode_defunct
 from eth_account import Account
 import jwt
 from django.conf import settings
 import secrets
 import string
+import logging
+from rest_framework_simplejwt.tokens import RefreshToken
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 class EthereumAuthSerializer(serializers.Serializer):
-    address = serializers.CharField()
-    signature = serializers.CharField()
+    address = serializers.CharField(required=True)
+    signature = serializers.CharField(required=True)
 
     def validate(self, data):
-        address = data.get('address')
-        signature = data.get('signature')
-
-        # Get or create user
+        address = data['address'].lower()
+        signature = data['signature']
+        
+        # Get user with case-insensitive match
         try:
             user = User.objects.get(wallet_address__iexact=address)
         except User.DoesNotExist:
-            # Create new web3 user
-            user = User.objects.create_user(
-                wallet_address=address.lower(),
-                username=address.lower()
-            )
+            logger.warning(f"User with address {address} not found")
+            return {'user': None, 'token': None}
         
-        # Verify the signature
+        # Prepare the exact message that was signed
         message = f"I'm signing my one-time nonce: {user.nonce}"
+        logger.debug(f"Verifying message: {message}")
         
         try:
-            # Hash the message
-            message_hash = defunct_hash_message(text=message)
-            # Recover the address from the signature
+            # Use encode_defunct for text messages
+            message_hash = encode_defunct(text=message)
+            
+            # Recover the address
             recovered_address = Account.recover_message(
                 message_hash,
                 signature=signature
             ).lower()
-        except:
-            raise serializers.ValidationError("Invalid signature or message.")
+            
+            logger.debug(f"Recovered address: {recovered_address}, Expected: {address}")
+            
+            if recovered_address != address:
+                logger.error("Address mismatch in signature verification")
+                raise serializers.ValidationError("Address and signature don't match.")
+                
+        except ValueError as e:
+            logger.error(f"Signature verification failed: {str(e)}")
+            raise serializers.ValidationError("Invalid signature or message.") from e
+        except Exception as e:
+            logger.error(f"Unexpected error during verification: {str(e)}")
+            raise serializers.ValidationError("Signature verification failed.") from e
         
-        # Check if the recovered address matches the provided address
-        if recovered_address != address.lower():
-            raise serializers.ValidationError("Address and signature don't match.")
-        
-        # Generate a new nonce for next login
-        alphabet = string.ascii_letters + string.digits
-        user.nonce = ''.join(secrets.choice(alphabet) for i in range(32))
+        # Update nonce for future logins
+        user.nonce = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
         user.save()
         
-        # Generate JWT token
-        payload = {
-            'user_id': user.id,
-            'address': user.wallet_address,
-            'username': user.get_username()
-        }
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+        # # Generate JWT token
+        # payload = {
+        #     'user_id': user.id,
+        #     'address': user.wallet_address,
+        #     'username': user.get_username()
+        # }
+        # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+        refresh = RefreshToken.for_user(user)
+        refresh['address'] = user.wallet_address
         
         return {
             'user': user,
-            'token': token
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
         }
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'wallet_address')
+        fields = ('id', 'username', 'wallet_address', 'user_type')

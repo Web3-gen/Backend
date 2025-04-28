@@ -22,6 +22,7 @@ class NonceView(APIView):
             wallet_address__iexact=address,
             defaults={
                 'wallet_address': address.lower(),
+                'user_type': 'organization',
                 'username': address.lower(),
                 'nonce': nonce
             }
@@ -40,15 +41,18 @@ class EthereumLoginView(APIView):
         serializer = EthereumAuthSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        validated_data = serializer.validate(serializer.validated_data)
+        validated_data = serializer.validated_data
         user = validated_data['user']
-        token = validated_data['token']
+
+        if user is None:
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
         
         user_serializer = UserSerializer(user)
         
         return Response({
             'user': user_serializer.data,
-            'token': token
+            'refresh': validated_data['refresh'],
+            'access': validated_data['access']
         })
 
 class UserDetailView(APIView):
@@ -57,3 +61,13 @@ class UserDetailView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+class VerifyAddressView(APIView):
+    
+    def get(self, request, address):
+        try:
+            user = User.objects.get(wallet_address__iexact=address)
+            return Response({'exists': True, 'user_type': user.user_type}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'exists': False}, status=status.HTTP_404_NOT_FOUND)
+        
