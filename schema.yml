@@ -4,6 +4,153 @@ info:
   version: 1.0.0
   description: API for managing HR operations
 paths:
+  /api/v1/notifications/notifications/:
+    get:
+      operationId: notifications_notifications_list
+      description: Viewset for handling notification operations.
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+          description: ''
+    post:
+      operationId: notifications_notifications_create
+      description: Viewset for handling notification operations.
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/notifications/{id}/:
+    get:
+      operationId: notifications_notifications_retrieve
+      description: Viewset for handling notification operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    put:
+      operationId: notifications_notifications_update
+      description: Viewset for handling notification operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    patch:
+      operationId: notifications_notifications_partial_update
+      description: Viewset for handling notification operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    delete:
+      operationId: notifications_notifications_destroy
+      description: Viewset for handling notification operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/profile/organization-profile/:
     get:
       operationId: profile_organization_profile_list
@@ -151,6 +298,21 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/profile/organization-profile/get_organization_recipients/:
+    get:
+      operationId: profile_organization_profile_get_organization_recipients_retrieve
+      description: Retrieve all recipients associated with the authenticated organization.
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationProfile'
+          description: ''
   /api/v1/profile/recipient-profile/:
     get:
       operationId: profile_recipient_profile_list
@@ -537,6 +699,34 @@ paths:
           description: No response body
 components:
   schemas:
+    Notification:
+      type: object
+      description: Serializer for the Notification model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        message:
+          type: string
+        is_read:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - is_read
+      - message
+      - type
+      - user
     OrganizationProfile:
       type: object
       description: Serializer for OrganizationProfile model.
@@ -578,6 +768,27 @@ components:
       - name
       - recipients
       - updated_at
+    PatchedNotification:
+      type: object
+      description: Serializer for the Notification model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        message:
+          type: string
+        is_read:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
     PatchedOrganizationProfile:
       type: object
       description: Serializer for OrganizationProfile model.
@@ -688,6 +899,24 @@ components:
       - organization
       - recipient_ethereum_address
       - updated_at
+    TypeEnum:
+      enum:
+      - recipientAdded
+      - recipientRemoved
+      - recipientUpdated
+      - organizationUpdated
+      - organizationAdded
+      - organizationRemoved
+      - login
+      type: string
+      description: |-
+        * `recipientAdded` - Recipient Added
+        * `recipientRemoved` - Recipient Removed
+        * `recipientUpdated` - Recipient Updated
+        * `organizationUpdated` - Organization Updated
+        * `organizationAdded` - Organization Added
+        * `organizationRemoved` - Organization Removed
+        * `login` - Login
     WaitlistEntry:
       type: object
       properties:

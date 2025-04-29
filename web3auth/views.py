@@ -6,6 +6,7 @@ from .serializers import EthereumAuthSerializer, UserSerializer
 from django.contrib.auth import get_user_model
 import secrets
 import string
+from notifications.models import Notification
 
 User = get_user_model()
 
@@ -48,6 +49,13 @@ class EthereumLoginView(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
         
         user_serializer = UserSerializer(user)
+
+        notification = Notification.objects.create(
+            user=user,
+            type="login",
+            message="Login Succefully",
+            is_read=False
+        )
         
         return Response({
             'user': user_serializer.data,

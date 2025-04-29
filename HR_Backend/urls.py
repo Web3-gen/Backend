@@ -28,5 +28,6 @@ urlpatterns = [
     path('api/v1/waitlist/', include('waitlist.urls')),
     path('api/v1/web3auth/', include('web3auth.urls')),
     path('api/v1/profile/', include('user_profile.urls')),
+    path('api/v1/notifications/', include('notifications.urls')),
 
 ]
