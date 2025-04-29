@@ -12,7 +12,7 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipientProfile
         fields = ['id', 'name', 'email', 'organization', 'recipient_ethereum_address', 
-                    'recipient_phone', 'created_at', 'updated_at']
+                    'recipient_phone', 'salary', 'position','status','created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def to_representation(self, instance):
@@ -24,6 +24,9 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
             "name": instance.name,
             "organization": instance.organization.name,
             "wallet_address": instance.user.wallet_address,
+            "salary": instance.salary,
+            "position": instance.position,
+            "status": instance.status,
             "created_at": instance.created_at.isoformat() if instance.created_at else None,
             "updated_at": instance.updated_at.isoformat() if instance.updated_at else None,
         }

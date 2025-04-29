@@ -58,13 +58,6 @@ class EthereumAuthSerializer(serializers.Serializer):
         user.nonce = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
         user.save()
         
-        # # Generate JWT token
-        # payload = {
-        #     'user_id': user.id,
-        #     'address': user.wallet_address,
-        #     'username': user.get_username()
-        # }
-        # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
         refresh = RefreshToken.for_user(user)
         refresh['address'] = user.wallet_address
         

@@ -846,6 +846,17 @@ components:
           type: string
           nullable: true
           maxLength: 15
+        salary:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        position:
+          type: string
+          nullable: true
+          maxLength: 100
+        status:
+          $ref: '#/components/schemas/StatusEnum'
         created_at:
           type: string
           format: date-time
@@ -883,6 +894,17 @@ components:
           type: string
           nullable: true
           maxLength: 15
+        salary:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        position:
+          type: string
+          nullable: true
+          maxLength: 100
+        status:
+          $ref: '#/components/schemas/StatusEnum'
         created_at:
           type: string
           format: date-time
@@ -899,6 +921,14 @@ components:
       - organization
       - recipient_ethereum_address
       - updated_at
+    StatusEnum:
+      enum:
+      - active
+      - on_leave
+      type: string
+      description: |-
+        * `active` - Active
+        * `on_leave` - On Leave
     TypeEnum:
       enum:
       - recipientAdded
