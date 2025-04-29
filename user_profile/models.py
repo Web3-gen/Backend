@@ -32,6 +32,16 @@ class RecipientProfile(models.Model):
     organization = models.ForeignKey(OrganizationProfile, on_delete=models.CASCADE, related_name='recipients')
     recipient_ethereum_address = models.CharField(max_length=42, unique=True)
     recipient_phone = models.CharField(max_length=15, blank=True, null=True)
+    salary = models.IntegerField(blank=True, null=True)
+    position = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(
+        max_length=30,
+        choices=[
+            ('active', 'Active'),
+            ('on_leave', 'On Leave')
+        ],
+        default='active'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
