@@ -23,6 +23,20 @@ class OrganizationProfileView(ModelViewSet):
         by filtering against a `user` query parameter in the URL.
         """
         return super().get_queryset().filter(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        # Check if user already has an organization profile
+        try:
+            instance = OrganizationProfile.objects.get(user=request.user)
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except OrganizationProfile.DoesNotExist:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def perform_create(self, serializer):
         
@@ -68,6 +82,20 @@ class RecipientProfileView(ModelViewSet):
         """
         return super().get_queryset().filter(user=self.request.user)
     
+    def create(self, request, *args, **kwargs):
+        # Check if user already has an organization profile
+        try:
+            instance = RecipientProfile.objects.get(user=request.user)
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except RecipientProfile.DoesNotExist:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
     @action(detail=True, methods=['post'])
     def batch_create(self, request, *args, **kwargs):
         """
