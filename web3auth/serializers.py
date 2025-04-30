@@ -8,6 +8,7 @@ import secrets
 import string
 import logging
 from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -59,6 +60,8 @@ class EthereumAuthSerializer(serializers.Serializer):
         user.save()
         
         refresh = RefreshToken.for_user(user)
+        refresh.set_exp(lifetime=timedelta(days=7))  
+        refresh.access_token.set_exp(lifetime=timedelta(hours=24))  
         refresh['address'] = user.wallet_address
         
         return {
