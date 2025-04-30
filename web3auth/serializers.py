@@ -9,7 +9,6 @@ import string
 import logging
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import timedelta
-from rest_framework_simplejwt.settings import api_settings
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -60,26 +59,15 @@ class EthereumAuthSerializer(serializers.Serializer):
         user.nonce = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
         user.save()
         
-        # Create a token with custom lifetime
         refresh = RefreshToken.for_user(user)
-        
-        # Calculate the expiration times correctly
-        from datetime import datetime, timezone
-        
-        # For refresh token (7 days)
-        refresh_lifetime = timedelta(days=7)
-        refresh.payload["exp"] = int((datetime.now(timezone.utc) + refresh_lifetime).timestamp())
-        refresh["address"] = user.wallet_address
-        
-        # For access token (24 hours)
-        access_token = refresh.access_token
-        access_lifetime = timedelta(hours=24)
-        access_token.payload["exp"] = int((datetime.now(timezone.utc) + access_lifetime).timestamp())
+        refresh.set_exp(lifetime=timedelta(days=7))  
+        refresh.access_token.set_exp(lifetime=timedelta(hours=24))  
+        refresh['address'] = user.wallet_address
         
         return {
             'user': user,
             'refresh': str(refresh),
-            'access': str(access_token)
+            'access': str(refresh.access_token)
         }
 
 class UserSerializer(serializers.ModelSerializer):
