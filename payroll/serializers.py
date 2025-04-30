@@ -39,7 +39,7 @@ class PayRollSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """
         Custom validation to ensure organization can't create duplicate payrolls
-        for the same recipient on the same date
+        for the same recipient on the same date (only checking pending or paid status)
         """
         recipient = data.get('recipient')
         organization = data.get('organization')
@@ -51,10 +51,11 @@ class PayRollSerializer(serializers.ModelSerializer):
             if PayRoll.objects.filter(
                 recipient=recipient,
                 organization=organization,
-                date=date
+                date=date,
+                status__in=['pending', 'completed']  # Use status__in to check multiple values
             ).exists():
                 raise serializers.ValidationError(
-                    "A payroll entry already exists for this recipient on this date"
+                    "A pending or paid payroll entry already exists for this recipient on this date"
                 )
         
         return data
