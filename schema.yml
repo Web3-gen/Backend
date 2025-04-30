@@ -741,6 +741,10 @@ components:
           type: string
           format: email
           maxLength: 254
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
         organization_address:
           type: string
           nullable: true
@@ -752,6 +756,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        total_recipients:
+          type: string
           readOnly: true
         created_at:
           type: string
@@ -767,7 +774,9 @@ components:
       - id
       - name
       - recipients
+      - total_recipients
       - updated_at
+      - user
     PatchedNotification:
       type: object
       description: Serializer for the Notification model.
@@ -803,6 +812,10 @@ components:
           type: string
           format: email
           maxLength: 254
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
         organization_address:
           type: string
           nullable: true
@@ -814,6 +827,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        total_recipients:
+          type: string
           readOnly: true
         created_at:
           type: string
@@ -837,6 +853,10 @@ components:
           type: string
           format: email
           maxLength: 254
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
         organization:
           type: integer
         recipient_ethereum_address:
@@ -885,6 +905,10 @@ components:
           type: string
           format: email
           maxLength: 254
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
         organization:
           type: integer
         recipient_ethereum_address:
@@ -921,6 +945,7 @@ components:
       - organization
       - recipient_ethereum_address
       - updated_at
+      - user
     StatusEnum:
       enum:
       - active
@@ -947,6 +972,35 @@ components:
         * `organizationAdded` - Organization Added
         * `organizationRemoved` - Organization Removed
         * `login` - Login
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        wallet_address:
+          type: string
+          nullable: true
+          maxLength: 42
+        user_type:
+          $ref: '#/components/schemas/UserTypeEnum'
+      required:
+      - id
+      - username
+    UserTypeEnum:
+      enum:
+      - recipient
+      - organization
+      type: string
+      description: |-
+        * `recipient` - Recipient
+        * `organization` - Organization
     WaitlistEntry:
       type: object
       properties:
