@@ -7,8 +7,8 @@ class OrganizationProfile(models.Model):
     Organization profile model to store organization information.
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=150, unique=True)
-    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
     organization_address = models.TextField(blank=True, null=True)
     organization_phone = models.CharField(max_length=15, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,8 +27,8 @@ class RecipientProfile(models.Model):
     Recipient profile model to store recipient information.
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=150, unique=True)
-    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
     organization = models.ForeignKey(OrganizationProfile, on_delete=models.CASCADE, related_name='recipients')
     recipient_ethereum_address = models.CharField(max_length=42, unique=True)
     recipient_phone = models.CharField(max_length=15, blank=True, null=True)
