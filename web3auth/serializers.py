@@ -61,14 +61,20 @@ class EthereumAuthSerializer(serializers.Serializer):
         user.save()
         
         # Create a token with custom lifetime
-        refresh = RefreshToken()
-        refresh.payload["user_id"] = user.id
-        refresh.payload["exp"] = refresh.current_time + timedelta(days=7).total_seconds()
+        refresh = RefreshToken.for_user(user)
+        
+        # Calculate the expiration times correctly
+        from datetime import datetime, timezone
+        
+        # For refresh token (7 days)
+        refresh_lifetime = timedelta(days=7)
+        refresh.payload["exp"] = int((datetime.now(timezone.utc) + refresh_lifetime).timestamp())
         refresh["address"] = user.wallet_address
         
-        # Set access token lifetime
+        # For access token (24 hours)
         access_token = refresh.access_token
-        access_token.payload["exp"] = access_token.current_time + timedelta(hours=24).total_seconds()
+        access_lifetime = timedelta(hours=24)
+        access_token.payload["exp"] = int((datetime.now(timezone.utc) + access_lifetime).timestamp())
         
         return {
             'user': user,
