@@ -151,6 +151,222 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/payroll/payrolls/:
+    get:
+      operationId: payroll_payrolls_list
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PayRoll'
+          description: ''
+    post:
+      operationId: payroll_payrolls_create
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      tags:
+      - payroll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+  /api/v1/payroll/payrolls/{id}/:
+    get:
+      operationId: payroll_payrolls_retrieve
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+    put:
+      operationId: payroll_payrolls_update
+      description: Update payroll entry with additional validation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+    patch:
+      operationId: payroll_payrolls_partial_update
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPayRoll'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPayRoll'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPayRoll'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+    delete:
+      operationId: payroll_payrolls_destroy
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/payroll/payrolls/{id}/mark_as_paid/:
+    post:
+      operationId: payroll_payrolls_mark_as_paid_create
+      description: Mark a payroll entry as paid
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+  /api/v1/payroll/payrolls/monthly_report/:
+    get:
+      operationId: payroll_payrolls_monthly_report_retrieve
+      description: Get monthly breakdown of payrolls
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+  /api/v1/payroll/payrolls/summary/:
+    get:
+      operationId: payroll_payrolls_summary_retrieve
+      description: Get summary of payrolls including total amount paid and pending
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
   /api/v1/profile/organization-profile/:
     get:
       operationId: profile_organization_profile_list
@@ -839,6 +1055,52 @@ components:
           type: string
           format: date-time
           readOnly: true
+    PatchedPayRoll:
+      type: object
+      description: Serializer for the PayRoll model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        recipient:
+          type: integer
+        recipient_details:
+          allOf:
+          - $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        organization:
+          type: integer
+        organization_details:
+          allOf:
+          - $ref: '#/components/schemas/OrganizationProfile'
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        batch_reference:
+          type: string
+          nullable: true
+          maxLength: 50
+        description:
+          type: string
+        date:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        paid_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        status:
+          $ref: '#/components/schemas/PayRollStatusEnum'
+        is_paid:
+          type: boolean
+          readOnly: true
     PatchedRecipientProfile:
       type: object
       description: Serializer for RecipientProfile model.
@@ -876,7 +1138,7 @@ components:
           nullable: true
           maxLength: 100
         status:
-          $ref: '#/components/schemas/StatusEnum'
+          $ref: '#/components/schemas/RecipientProfileStatusEnum'
         created_at:
           type: string
           format: date-time
@@ -891,6 +1153,73 @@ components:
         email:
           type: string
           format: email
+    PayRoll:
+      type: object
+      description: Serializer for the PayRoll model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        recipient:
+          type: integer
+        recipient_details:
+          allOf:
+          - $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        organization:
+          type: integer
+        organization_details:
+          allOf:
+          - $ref: '#/components/schemas/OrganizationProfile'
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        batch_reference:
+          type: string
+          nullable: true
+          maxLength: 50
+        description:
+          type: string
+        date:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        paid_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        status:
+          $ref: '#/components/schemas/PayRollStatusEnum'
+        is_paid:
+          type: boolean
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - date
+      - id
+      - is_paid
+      - organization
+      - organization_details
+      - paid_at
+      - recipient
+      - recipient_details
+    PayRollStatusEnum:
+      enum:
+      - pending
+      - completed
+      - failed
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `completed` - Completed
+        * `failed` - Failed
     RecipientProfile:
       type: object
       description: Serializer for RecipientProfile model.
@@ -928,7 +1257,7 @@ components:
           nullable: true
           maxLength: 100
         status:
-          $ref: '#/components/schemas/StatusEnum'
+          $ref: '#/components/schemas/RecipientProfileStatusEnum'
         created_at:
           type: string
           format: date-time
@@ -946,7 +1275,7 @@ components:
       - recipient_ethereum_address
       - updated_at
       - user
-    StatusEnum:
+    RecipientProfileStatusEnum:
       enum:
       - active
       - on_leave
