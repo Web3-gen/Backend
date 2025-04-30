@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'web3auth.apps.Web3AuthConfig',
     'user_profile.apps.UserProfileConfig',
     'notifications.apps.NotificationsConfig',
+    'payroll.apps.PayrollConfig',
 
     # Third-party apps
     'corsheaders',

@@ -55,7 +55,7 @@ class OrganizationProfileView(ModelViewSet):
         Retrieve all recipients associated with the authenticated organization.
         """
         try:
-            organization = OrganizationProfile.objects.get(user=request.user)
+            organization = OrganizationProfile.objects.get(user=self.request.user.id)
             recipients = organization.recipients.all()
             serializer = RecipientProfileSerializer(recipients, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
