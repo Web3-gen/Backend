@@ -548,7 +548,7 @@ paths:
           description: ''
     post:
       operationId: profile_recipient_profile_create
-      description: Viewset for handling recipient profile operations.
+      description: Create a new recipient profile
       tags:
       - profile
       requestBody:
@@ -676,17 +676,10 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/v1/profile/recipient-profile/{id}/batch_create/:
+  /api/v1/profile/recipient-profile/batch_create/:
     post:
       operationId: profile_recipient_profile_batch_create_create
       description: Create multiple recipient profiles in a single request.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this recipient profile.
-        required: true
       tags:
       - profile
       requestBody:
