@@ -10,11 +10,13 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
     Serializer for RecipientProfile model.
     """
     user = UserSerializer(read_only=True)
+    user_id = serializers.IntegerField(write_only=True, required=False)  # Add this line
 
     class Meta:
         model = RecipientProfile
-        fields = ['id', 'name', 'email', 'user','organization', 'recipient_ethereum_address', 
-                    'recipient_phone', 'salary', 'position','status','created_at', 'updated_at']
+        fields = ['id', 'name', 'email', 'user', 'user_id', 'organization', 
+                 'recipient_ethereum_address', 'recipient_phone', 'salary', 
+                 'position', 'status', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def to_representation(self, instance):

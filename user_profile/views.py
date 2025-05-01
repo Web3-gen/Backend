@@ -110,25 +110,23 @@ class RecipientProfileView(ModelViewSet):
                     "user_type": "recipient",
                     "nonce": "".join(
                         secrets.choice(string.ascii_letters + string.digits)
-                        for _ in range(32)
-                    ),
+                        for _ in range(32))
                 },
             )
 
             # Check if recipient profile already exists for this user
             if RecipientProfile.objects.filter(user=user).exists():
                 return Response(
-                    {
-                        "detail": "A recipient profile already exists for this ethereum address"
-                    },
+                    {"detail": "A recipient profile already exists for this ethereum address"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Add organization and user to request data
-            request.data["organization"] = organization.id
-            request.data["user"] = user.id
+            # Create mutable copy of request.data
+            data = request.data.copy()
+            data["organization"] = organization.id
+            data["user"] = user.id
 
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data=data)  # Use the copied data
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
 
