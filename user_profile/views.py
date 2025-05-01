@@ -6,6 +6,7 @@ from .serializers import OrganizationProfileSerializer, RecipientProfileSerializ
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from notifications.models import Notification
+from django.contrib.auth.models import User
 
 
 class OrganizationProfileView(ModelViewSet):
@@ -98,8 +99,16 @@ class RecipientProfileView(ModelViewSet):
             # Get the organization profile of the requesting user
             organization = OrganizationProfile.objects.get(user=request.user)
 
-            # Add organization to the request data
+            # Create a new user for the recipient
+            user = User.objects.create(
+                username=request.data.get("recipient_ethereum_address"),
+                wallet_address=request.data.get("recipient_ethereum_address"),
+                user_type="recipient",
+            )
+
+            # Add organization and user to the request data
             request.data["organization"] = organization.id
+            request.data["user"] = user.id
 
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
@@ -119,6 +128,8 @@ class RecipientProfileView(ModelViewSet):
                 {"detail": "Only organizations can create recipient profiles"},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"])
     def batch_create(self, request, *args, **kwargs):
