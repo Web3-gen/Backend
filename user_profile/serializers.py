@@ -9,6 +9,7 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
     """
 
     user = UserSerializer(read_only=True)
+    user_id = serializers.IntegerField(write_only=True, required=False)  # Add this line
 
     class Meta:
         model = RecipientProfile

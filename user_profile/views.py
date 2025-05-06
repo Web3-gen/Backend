@@ -20,6 +20,7 @@ class OrganizationProfileView(ModelViewSet):
     Viewset for handling organization profile operations.
     """
 
+
     queryset = OrganizationProfile.objects.all()
     serializer_class = OrganizationProfileSerializer
     permission_classes = [IsAuthenticated, IsOrganization]
@@ -49,6 +50,7 @@ class OrganizationProfileView(ModelViewSet):
             self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
     def perform_create(self, serializer):
         with transaction.atomic():
             serializer.save(user=self.request.user)
@@ -59,6 +61,7 @@ class OrganizationProfileView(ModelViewSet):
                 is_read=False,
             )
 
+    @action(detail=False, methods=["get"])
     @action(detail=False, methods=["get"])
     def get_organization_recipients(self, request):
         """
@@ -73,6 +76,8 @@ class OrganizationProfileView(ModelViewSet):
             return Response(
                 {"detail": "Organization profile not found."},
                 status=status.HTTP_404_NOT_FOUND,
+                {"detail": "Organization profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
 
@@ -80,6 +85,7 @@ class RecipientProfileView(ModelViewSet):
     """
     Viewset for handling recipient profile operations.
     """
+
 
     queryset = RecipientProfile.objects.all()
     serializer_class = RecipientProfileSerializer
