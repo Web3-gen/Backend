@@ -548,7 +548,7 @@ paths:
           description: ''
     post:
       operationId: profile_recipient_profile_create
-      description: Create a new recipient profile
+      description: Viewset for handling recipient profile operations.
       tags:
       - profile
       requestBody:
@@ -676,6 +676,33 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/profile/recipient-profile/batch_create/:
+    post:
+      operationId: profile_recipient_profile_batch_create_create
+      description: Viewset for handling recipient profile operations.
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecipientProfile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipientProfile'
+          description: ''
   /api/v1/waitlist/waitlist/:
     get:
       operationId: waitlist_waitlist_list
@@ -1085,9 +1112,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/User'
           readOnly: true
-        user_id:
-          type: integer
-          writeOnly: true
         organization:
           type: integer
         recipient_ethereum_address:
@@ -1207,9 +1231,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/User'
           readOnly: true
-        user_id:
-          type: integer
-          writeOnly: true
         organization:
           type: integer
         recipient_ethereum_address:
