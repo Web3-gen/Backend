@@ -76,8 +76,6 @@ class OrganizationProfileView(ModelViewSet):
             return Response(
                 {"detail": "Organization profile not found."},
                 status=status.HTTP_404_NOT_FOUND,
-                {"detail": "Organization profile not found."},
-                status=status.HTTP_404_NOT_FOUND,
             )
 
 
