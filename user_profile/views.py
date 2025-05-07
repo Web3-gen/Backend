@@ -12,14 +12,18 @@ from notifications.models import Notification
 
 class IsOrganization(BasePermission):
     def has_permission(self, request, view):
-        return request.user.user_type == "organization"
+        return request.user.is_organization
+
+
+class IsRecipient(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_recipient
 
 
 class OrganizationProfileView(ModelViewSet):
     """
     Viewset for handling organization profile operations.
     """
-
 
     queryset = OrganizationProfile.objects.all()
     serializer_class = OrganizationProfileSerializer
@@ -33,9 +37,9 @@ class OrganizationProfileView(ModelViewSet):
         return super().get_queryset().filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        if request.user.user_type != "organization":
+        if not request.user.is_organization:
             raise serializers.ValidationError(
-                "Only organization type users can create organization profiles"
+                "User must have organization privileges to create organization profiles"
             )
 
         try:
@@ -47,9 +51,13 @@ class OrganizationProfileView(ModelViewSet):
         except OrganizationProfile.DoesNotExist:
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
+            with transaction.atomic():
+                self.perform_create(serializer)
+                # Update user type if they're becoming both
+                if request.user.user_type == "recipient":
+                    request.user.user_type = "both"
+                    request.user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
     def perform_create(self, serializer):
         with transaction.atomic():
@@ -61,7 +69,6 @@ class OrganizationProfileView(ModelViewSet):
                 is_read=False,
             )
 
-    @action(detail=False, methods=["get"])
     @action(detail=False, methods=["get"])
     def get_organization_recipients(self, request):
         """
@@ -84,17 +91,12 @@ class RecipientProfileView(ModelViewSet):
     Viewset for handling recipient profile operations.
     """
 
-
     queryset = RecipientProfile.objects.all()
     serializer_class = RecipientProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """
-        If user is organization, return all recipients in their organization
-        If user is recipient, return only their profile
-        """
-        if self.request.user.user_type == "organization":
+        if self.request.user.is_organization:
             try:
                 organization = OrganizationProfile.objects.get(user=self.request.user)
                 return RecipientProfile.objects.filter(organization=organization)
@@ -103,25 +105,25 @@ class RecipientProfileView(ModelViewSet):
         return RecipientProfile.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        """
-        Create a new recipient profile.
-        Organization users can create recipients for their organization.
-        """
-        if self.request.user.user_type != "organization":
+        if not self.request.user.is_organization:
             raise serializers.ValidationError(
-                "Only organizations can create recipient profiles"
+                "Only users with organization privileges can create recipient profiles"
             )
 
         try:
             organization = OrganizationProfile.objects.get(user=self.request.user)
-            serializer.save(organization=organization)
-            notification = Notification.objects.create(
-                user=self.request.user,
-                type="recipientAdded",
-                message="New recipient has been added successfully.",
-                is_read=False,
-            )
-            notification.save()
+            with transaction.atomic():
+                recipient = serializer.save(organization=organization)
+                # Update user type if they're becoming both
+                if recipient.user.user_type == "organization":
+                    recipient.user.user_type = "both"
+                    recipient.user.save()
+                Notification.objects.create(
+                    user=self.request.user,
+                    type="recipientAdded",
+                    message=f"New recipient {recipient.name} has been added successfully.",
+                    is_read=False,
+                )
         except OrganizationProfile.DoesNotExist:
             raise serializers.ValidationError("Organization profile not found")
 
