@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from .models import OrganizationProfile, RecipientProfile
 from web3auth.serializers import UserSerializer
 
@@ -84,9 +85,12 @@ class OrganizationProfileSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
+    @extend_schema_field(int)
     def get_total_recipients(self, obj):
         """
         Get the total number of recipients in the organization.
+        Returns:
+            int: The total number of recipients
         """
         return obj.recipients.count()
 
