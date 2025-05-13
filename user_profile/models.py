@@ -28,7 +28,7 @@ class RecipientProfile(models.Model):
     Each recipient is a user and belongs to an organization.
     """
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     organization = models.ForeignKey(
         OrganizationProfile, on_delete=models.CASCADE, related_name="recipients"
     )
