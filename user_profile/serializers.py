@@ -13,7 +13,7 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
     """
 
     user = UserSerializer(read_only=True)
-    #wallet_address = serializers.CharField(max_length=42, write_only=True)
+    organization = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = RecipientProfile
@@ -22,7 +22,7 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
             "name",
             "email",
             "user",
-            #"wallet_address",  # Added for creating new users
+            "organization",
             "recipient_ethereum_address",
             "recipient_phone",
             "salary",
@@ -32,54 +32,70 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
+        extra_kwargs = {
+            "recipient_ethereum_address": {"required": True},
+            "email": {"required": True},
+            "name": {"required": True},
+        }
+
+    def validate(self, attrs):
+        # Validate required fields first
+        if not attrs.get("recipient_ethereum_address"):
+            raise serializers.ValidationError(
+                {"recipient_ethereum_address": "This field is required."}
+            )
+        if not attrs.get("email"):
+            raise serializers.ValidationError({"email": "This field is required."})
+
+        # Convert ethereum address to lowercase
+        attrs["recipient_ethereum_address"] = attrs[
+            "recipient_ethereum_address"
+        ].lower()
+
+        # Check for existing ethereum address
+        if RecipientProfile.objects.filter(
+            recipient_ethereum_address__iexact=attrs["recipient_ethereum_address"]
+        ).exists():
+            raise serializers.ValidationError(
+                {
+                    "recipient_ethereum_address": "This ethereum address is already registered."
+                }
+            )
+
+        return attrs
 
     def create(self, validated_data):
-        recipient_ethereum_address = validated_data.pop('recipient_ethereum_address')
-        
-        # Try to get existing user or create new one
+        organization = self.context.get("organization")
+        if not organization:
+            raise serializers.ValidationError(
+                {"organization": "Organization is required"}
+            )
+
+        # Create user first
         User = get_user_model()
         user, created = User.objects.get_or_create(
-            wallet_address__iexact=recipient_ethereum_address,
+            wallet_address__iexact=validated_data["recipient_ethereum_address"],
             defaults={
-                "wallet_address": recipient_ethereum_address.lower(),
-                "username": recipient_ethereum_address.lower(),
+                "wallet_address": validated_data["recipient_ethereum_address"],
+                "username": validated_data["recipient_ethereum_address"],
                 "user_type": "recipient",
-                "nonce": "".join(secrets.choice(string.ascii_letters + string.digits) for i in range(32))
-            }
+                "nonce": "".join(
+                    secrets.choice(string.ascii_letters + string.digits)
+                    for i in range(32)
+                ),
+            },
         )
 
-        # Create recipient profile
-        recipient_profile = RecipientProfile.objects.create(
-            user=user,
-            **validated_data
-        )
-        return recipient_profile
-
-    def to_representation(self, instance):
-        """
-        Customize the representation of the RecipientProfile instance.
-        """
-        return {
-            "id": instance.id,
-            "name": instance.name,
-            "email": instance.email,  # Added missing email field
-            "organization": instance.organization.name,
-            "user": UserSerializer(
-                instance.user
-            ).data,  # Use serializer instead of direct query
-            "recipient_ethereum_address": instance.recipient_ethereum_address,  # Added missing field
-            "recipient_phone": instance.recipient_phone,  # Added missing field
-            #"wallet_address": instance.user.wallet_address,
-            "salary": instance.salary,
-            "position": instance.position,
-            "status": instance.status,
-            "created_at": (
-                instance.created_at.isoformat() if instance.created_at else None
-            ),
-            "updated_at": (
-                instance.updated_at.isoformat() if instance.updated_at else None
-            ),
-        }
+        try:
+            # Create recipient profile
+            recipient_profile = RecipientProfile.objects.create(
+                user=user, organization=organization, **validated_data
+            )
+            return recipient_profile
+        except Exception as e:
+            if created:
+                user.delete()  # Cleanup if user was just created
+            raise
 
 
 class OrganizationProfileSerializer(serializers.ModelSerializer):

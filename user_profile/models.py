@@ -34,7 +34,7 @@ class RecipientProfile(models.Model):
     )
     name = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
-    recipient_ethereum_address = models.CharField(max_length=42, unique=True)
+    recipient_ethereum_address = models.CharField(max_length=42, unique=True, null=False, blank=False)
     recipient_phone = models.CharField(max_length=15, blank=True, null=True)
     salary = models.IntegerField(blank=True, null=True)
     position = models.CharField(max_length=100, blank=True, null=True)

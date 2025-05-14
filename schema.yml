@@ -1168,6 +1168,7 @@ components:
           readOnly: true
         organization:
           type: integer
+          readOnly: true
         recipient_ethereum_address:
           type: string
           maxLength: 42
@@ -1287,6 +1288,7 @@ components:
           readOnly: true
         organization:
           type: integer
+          readOnly: true
         recipient_ethereum_address:
           type: string
           maxLength: 42

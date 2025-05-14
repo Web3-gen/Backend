@@ -99,18 +99,20 @@ class RecipientProfileView(ModelViewSet):
     def perform_create(self, serializer):
         try:
             organization = OrganizationProfile.objects.get(user=self.request.user)
-            recipient = serializer.save(organization=organization)
-            
-            # Create notification
+            serializer.context["organization"] = organization
+            recipient = serializer.save()
+
             Notification.objects.create(
                 user=self.request.user,
                 type="recipientAdded",
                 message=f"New recipient {recipient.name} has been added successfully.",
-                is_read=False
+                is_read=False,
             )
 
         except OrganizationProfile.DoesNotExist:
-            raise serializers.ValidationError("Organization profile not found")
+            raise serializers.ValidationError(
+                {"detail": "Organization profile not found"}
+            )
 
     @action(detail=False, methods=["post"])
     @transaction.atomic
@@ -139,10 +141,12 @@ class RecipientProfileView(ModelViewSet):
                     recipient = serializer.save(organization=organization)
                     created_recipients.append(recipient)
             except Exception as e:
-                errors.append({
-                    "recipient": recipient_data.get("email", "Unknown"),
-                    "errors": str(e)
-                })
+                errors.append(
+                    {
+                        "recipient": recipient_data.get("email", "Unknown"),
+                        "errors": str(e),
+                    }
+                )
                 continue
 
         if created_recipients:
@@ -150,12 +154,21 @@ class RecipientProfileView(ModelViewSet):
                 user=request.user,
                 type="recipientsAdded",
                 message=f"Successfully added {len(created_recipients)} recipients.",
-                is_read=False
+                is_read=False,
             )
 
-        return Response({
-            "success": len(created_recipients),
-            "failed": len(errors),
-            "created_recipients": RecipientProfileSerializer(created_recipients, many=True).data,
-            "errors": errors if errors else None
-        }, status=status.HTTP_201_CREATED if created_recipients else status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": len(created_recipients),
+                "failed": len(errors),
+                "created_recipients": RecipientProfileSerializer(
+                    created_recipients, many=True
+                ).data,
+                "errors": errors if errors else None,
+            },
+            status=(
+                status.HTTP_201_CREATED
+                if created_recipients
+                else status.HTTP_400_BAD_REQUEST
+            ),
+        )
