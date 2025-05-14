@@ -93,49 +93,35 @@ class RecipientProfileView(ModelViewSet):
 
     queryset = RecipientProfile.objects.all()
     serializer_class = RecipientProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOrganization]
 
-    def get_queryset(self):
-        if self.request.user.is_organization:
-            try:
-                organization = OrganizationProfile.objects.get(user=self.request.user)
-                return RecipientProfile.objects.filter(organization=organization)
-            except OrganizationProfile.DoesNotExist:
-                return RecipientProfile.objects.none()
-        return RecipientProfile.objects.filter(user=self.request.user)
-
+    @transaction.atomic
     def perform_create(self, serializer):
-        if not self.request.user.is_organization:
-            raise serializers.ValidationError(
-                "Only users with organization privileges can create recipient profiles"
-            )
-
         try:
             organization = OrganizationProfile.objects.get(user=self.request.user)
-            with transaction.atomic():
-                recipient = serializer.save(organization=organization)
-                # Update user type if they're becoming both
-                if recipient.user.user_type == "organization":
-                    recipient.user.user_type = "both"
-                    recipient.user.save()
-                Notification.objects.create(
-                    user=self.request.user,
-                    type="recipientAdded",
-                    message=f"New recipient {recipient.name} has been added successfully.",
-                    is_read=False,
-                )
+            recipient = serializer.save(organization=organization)
+            
+            # Create notification
+            Notification.objects.create(
+                user=self.request.user,
+                type="recipientAdded",
+                message=f"New recipient {recipient.name} has been added successfully.",
+                is_read=False
+            )
+
         except OrganizationProfile.DoesNotExist:
             raise serializers.ValidationError("Organization profile not found")
 
     @action(detail=False, methods=["post"])
+    @transaction.atomic
     def batch_create(self, request):
-        if self.request.user.user_type != "organization":
+        if not request.user.is_organization:
             raise serializers.ValidationError(
                 "Only organizations can create recipient profiles"
             )
 
         try:
-            organization = OrganizationProfile.objects.get(user=self.request.user)
+            organization = OrganizationProfile.objects.get(user=request.user)
         except OrganizationProfile.DoesNotExist:
             raise serializers.ValidationError("Organization profile not found")
 
@@ -146,46 +132,30 @@ class RecipientProfileView(ModelViewSet):
         created_recipients = []
         errors = []
 
-        with transaction.atomic():
-            for recipient_data in recipients_data:
-                serializer = self.get_serializer(data=recipient_data)
-                try:
-                    if serializer.is_valid(raise_exception=True):
-                        recipient = serializer.save(
-                            organization=organization, user_type="recipient"
-                        )
-                        created_recipients.append(recipient)
-                except serializers.ValidationError as e:
-                    errors.append(
-                        {
-                            "recipient": recipient_data.get("email", "Unknown"),
-                            "errors": e.detail,
-                        }
-                    )
-                    continue
+        for recipient_data in recipients_data:
+            serializer = self.get_serializer(data=recipient_data)
+            try:
+                if serializer.is_valid(raise_exception=True):
+                    recipient = serializer.save(organization=organization)
+                    created_recipients.append(recipient)
+            except Exception as e:
+                errors.append({
+                    "recipient": recipient_data.get("email", "Unknown"),
+                    "errors": str(e)
+                })
+                continue
 
-            if created_recipients:
-                Notification.objects.create(
-                    user=self.request.user,
-                    type="recipientsAdded",
-                    message=f"Successfully added {len(created_recipients)} recipients.",
-                    is_read=False,
-                )
+        if created_recipients:
+            Notification.objects.create(
+                user=request.user,
+                type="recipientsAdded",
+                message=f"Successfully added {len(created_recipients)} recipients.",
+                is_read=False
+            )
 
-        response_data = {
+        return Response({
             "success": len(created_recipients),
             "failed": len(errors),
-            "created_recipients": RecipientProfileSerializer(
-                created_recipients, many=True
-            ).data,
-            "errors": errors if errors else None,
-        }
-
-        return Response(
-            response_data,
-            status=(
-                status.HTTP_201_CREATED
-                if created_recipients
-                else status.HTTP_400_BAD_REQUEST
-            ),
-        )
+            "created_recipients": RecipientProfileSerializer(created_recipients, many=True).data,
+            "errors": errors if errors else None
+        }, status=status.HTTP_201_CREATED if created_recipients else status.HTTP_400_BAD_REQUEST)

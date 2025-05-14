@@ -2,6 +2,9 @@ from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
 from .models import OrganizationProfile, RecipientProfile
 from web3auth.serializers import UserSerializer
+from django.contrib.auth import get_user_model
+import secrets
+import string
 
 
 class RecipientProfileSerializer(serializers.ModelSerializer):
@@ -10,7 +13,7 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
     """
 
     user = UserSerializer(read_only=True)
-    # user_id = serializers.IntegerField(write_only=True, required=False)  # Add this line
+    #wallet_address = serializers.CharField(max_length=42, write_only=True)
 
     class Meta:
         model = RecipientProfile
@@ -19,7 +22,7 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
             "name",
             "email",
             "user",
-            "organization",
+            #"wallet_address",  # Added for creating new users
             "recipient_ethereum_address",
             "recipient_phone",
             "salary",
@@ -29,6 +32,28 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
+
+    def create(self, validated_data):
+        recipient_ethereum_address = validated_data.pop('recipient_ethereum_address')
+        
+        # Try to get existing user or create new one
+        User = get_user_model()
+        user, created = User.objects.get_or_create(
+            wallet_address__iexact=recipient_ethereum_address,
+            defaults={
+                "wallet_address": recipient_ethereum_address.lower(),
+                "username": recipient_ethereum_address.lower(),
+                "user_type": "recipient",
+                "nonce": "".join(secrets.choice(string.ascii_letters + string.digits) for i in range(32))
+            }
+        )
+
+        # Create recipient profile
+        recipient_profile = RecipientProfile.objects.create(
+            user=user,
+            **validated_data
+        )
+        return recipient_profile
 
     def to_representation(self, instance):
         """
@@ -44,7 +69,7 @@ class RecipientProfileSerializer(serializers.ModelSerializer):
             ).data,  # Use serializer instead of direct query
             "recipient_ethereum_address": instance.recipient_ethereum_address,  # Added missing field
             "recipient_phone": instance.recipient_phone,  # Added missing field
-            "wallet_address": instance.user.wallet_address,
+            #"wallet_address": instance.user.wallet_address,
             "salary": instance.salary,
             "position": instance.position,
             "status": instance.status,
