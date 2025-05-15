@@ -8,10 +8,9 @@ class PayRoll(models.Model):
     """
     recipient = models.ForeignKey(RecipientProfile, on_delete=models.CASCADE, related_name='recipients')
     organization = models.ForeignKey(OrganizationProfile, on_delete=models.CASCADE, related_name='organization')
-    amount = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2,
-        validators=[MinValueValidator(0.01)]
+    amount = models.BigIntegerField(
+        validators=[MinValueValidator(0)],
+        help_text="Amount in smallest currency unit (e.g., cents for USD)"
     )
     batch_reference = models.CharField(max_length=50, blank=True, null=True)
     description = models.TextField(blank=True)
