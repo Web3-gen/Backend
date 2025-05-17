@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'user_profile.apps.UserProfileConfig',
     'notifications.apps.NotificationsConfig',
     'payroll.apps.PayrollConfig',
+    'leaveRequest.apps.LeaverequestConfig',
 
     # Third-party apps
     'corsheaders',

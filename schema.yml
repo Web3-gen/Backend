@@ -4,6 +4,202 @@ info:
   version: 1.0.0
   description: API for managing HR operations
 paths:
+  /api/v1/leave_requests/leave_requests/:
+    get:
+      operationId: leave_requests_leave_requests_list
+      description: Viewset for handling leave request operations.
+      tags:
+      - leave_requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+    post:
+      operationId: leave_requests_leave_requests_create
+      description: Viewset for handling leave request operations.
+      tags:
+      - leave_requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+  /api/v1/leave_requests/leave_requests/{id}/:
+    get:
+      operationId: leave_requests_leave_requests_retrieve
+      description: Viewset for handling leave request operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+    put:
+      operationId: leave_requests_leave_requests_update
+      description: Viewset for handling leave request operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+    patch:
+      operationId: leave_requests_leave_requests_partial_update
+      description: Viewset for handling leave request operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLeaveRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLeaveRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLeaveRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+    delete:
+      operationId: leave_requests_leave_requests_destroy
+      description: Viewset for handling leave request operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/leave_requests/leave_requests/{id}/approve_leave_request/:
+    post:
+      operationId: leave_requests_leave_requests_approve_leave_request_create
+      description: Approve a leave request.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+  /api/v1/leave_requests/leave_requests/get_leave_requests/:
+    get:
+      operationId: leave_requests_leave_requests_get_leave_requests_retrieve
+      description: Get leave requests based on user type.
+      tags:
+      - leave_requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
   /api/v1/notifications/notifications/:
     get:
       operationId: notifications_notifications_list
@@ -946,6 +1142,68 @@ components:
       required:
       - address
       - signature
+    LeaveRequest:
+      type: object
+      description: Serializer for LeaveRequest model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        recipient:
+          allOf:
+          - $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        leave_type:
+          $ref: '#/components/schemas/LeaveTypeEnum'
+        reason:
+          type: string
+        status:
+          $ref: '#/components/schemas/LeaveRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - end_date
+      - id
+      - leave_type
+      - reason
+      - recipient
+      - start_date
+      - updated_at
+    LeaveRequestStatusEnum:
+      enum:
+      - pending
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `approved` - Approved
+        * `rejected` - Rejected
+    LeaveTypeEnum:
+      enum:
+      - sick
+      - vacation
+      - personal
+      - other
+      type: string
+      description: |-
+        * `sick` - Sick Leave
+        * `vacation` - Vacation Leave
+        * `personal` - Personal Leave
+        * `other` - Other
     Nonce:
       type: object
       properties:
@@ -1036,6 +1294,37 @@ components:
       - total_recipients
       - updated_at
       - user
+    PatchedLeaveRequest:
+      type: object
+      description: Serializer for LeaveRequest model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        recipient:
+          allOf:
+          - $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        leave_type:
+          $ref: '#/components/schemas/LeaveTypeEnum'
+        reason:
+          type: string
+        status:
+          $ref: '#/components/schemas/LeaveRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
     PatchedNotification:
       type: object
       description: Serializer for the Notification model.
@@ -1122,9 +1411,11 @@ components:
           - $ref: '#/components/schemas/OrganizationProfile'
           readOnly: true
         amount:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Amount in smallest currency unit (e.g., cents for USD)
         batch_reference:
           type: string
           nullable: true
@@ -1221,9 +1512,11 @@ components:
           - $ref: '#/components/schemas/OrganizationProfile'
           readOnly: true
         amount:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Amount in smallest currency unit (e.g., cents for USD)
         batch_reference:
           type: string
           nullable: true
