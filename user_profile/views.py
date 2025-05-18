@@ -93,11 +93,15 @@ class RecipientProfileView(ModelViewSet):
 
     queryset = RecipientProfile.objects.all()
     serializer_class = RecipientProfileSerializer
-    permission_classes = [IsAuthenticated, IsOrganization]
+    permission_classes = [IsAuthenticated]
 
     @transaction.atomic
     def perform_create(self, serializer):
         try:
+            if not self.request.user.is_organization:
+                raise serializers.ValidationError(
+                    "User must have organization privileges to create recipient profiles"
+                )
             organization = OrganizationProfile.objects.get(user=self.request.user)
             serializer.context["organization"] = organization
             recipient = serializer.save()
@@ -172,3 +176,37 @@ class RecipientProfileView(ModelViewSet):
                 else status.HTTP_400_BAD_REQUEST
             ),
         )
+
+    def perform_update(self, serializer):
+        """
+        Ensure only recipients can update their own profiles
+        """
+        try:
+            # Get the recipient profile being updated
+            instance = self.get_object()
+
+            # Check if the user is updating their own profile
+            if instance.user != self.request.user:
+                raise serializers.ValidationError(
+                    {"detail": "You can only update your own profile"}
+                )
+
+            # Check if user is a recipient
+            if not self.request.user.is_recipient:
+                raise serializers.ValidationError(
+                    {"detail": "User must have recipient privileges to update recipient profiles"}
+                )
+
+            # Save and create notification
+            serializer.save()
+            Notification.objects.create(
+                user=self.request.user,
+                type="recipientUpdated",
+                message="Recipient profile updated successfully.",
+                is_read=False
+            )
+
+        except RecipientProfile.DoesNotExist:
+            raise serializers.ValidationError(
+                {"detail": "Recipient profile not found"}
+            )
