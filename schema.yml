@@ -188,7 +188,11 @@ paths:
   /api/v1/leave_requests/leave_requests/get_leave_requests/:
     get:
       operationId: leave_requests_leave_requests_get_leave_requests_retrieve
-      description: Get leave requests based on user type.
+      description: |-
+        Get leave requests based on user type.
+
+        Query Parameters:
+            usertype (str, optional): Filter by user type ('recipient' or 'organization')
       tags:
       - leave_requests
       security:
