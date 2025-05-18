@@ -48,15 +48,37 @@ class LeaveRequestView(viewsets.ModelViewSet):
     def get_leave_requests(self, request):
         """
         Get leave requests based on user type.
+        
+        Query Parameters:
+            usertype (str, optional): Filter by user type ('recipient' or 'organization')
         """
         usertype = request.query_params.get('usertype', None)
-        if usertype == "recipient":
-            return LeaveRequest.objects.filter(recipient=request.user)
-        elif usertype == "organization":
-            return LeaveRequest.objects.filter(
-                recipient__organization=request.user
+        queryset = None
+        
+        try:
+            if usertype == "recipient":
+                recipient_profile = getattr(request.user, 'recipientprofile', None)
+                if not recipient_profile:
+                    raise ValueError("No recipient profile found")
+                queryset = LeaveRequest.objects.filter(recipient=recipient_profile)
+                
+            elif usertype == "organization":
+                org_profile = getattr(request.user, 'organizationprofile', None)
+                if not org_profile:
+                    raise ValueError("No organization profile found")
+                queryset = LeaveRequest.objects.filter(recipient__organization=org_profile)
+                
+            else:
+                queryset = self.get_queryset()
+            
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            
+        except (AttributeError, ValueError) as e:
+            return Response(
+                {"error": str(e) or "Invalid user type or user profile not found"},
+                status=status.HTTP_400_BAD_REQUEST
             )
-        return []
     
     @action(detail=True, methods=["post"], permission_classes=[IsOrganization])
     def approve_leave_request(self, request, pk=None):
