@@ -4,6 +4,569 @@ info:
   version: 1.0.0
   description: API for managing HR operations
 paths:
+  /api/v1/leave_requests/leave_requests/:
+    get:
+      operationId: leave_requests_leave_requests_list
+      description: Viewset for handling leave request operations.
+      tags:
+      - leave_requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+    post:
+      operationId: leave_requests_leave_requests_create
+      description: Viewset for handling leave request operations.
+      tags:
+      - leave_requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+  /api/v1/leave_requests/leave_requests/{id}/:
+    get:
+      operationId: leave_requests_leave_requests_retrieve
+      description: Viewset for handling leave request operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+    put:
+      operationId: leave_requests_leave_requests_update
+      description: Viewset for handling leave request operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+    patch:
+      operationId: leave_requests_leave_requests_partial_update
+      description: Viewset for handling leave request operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLeaveRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLeaveRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLeaveRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+    delete:
+      operationId: leave_requests_leave_requests_destroy
+      description: Viewset for handling leave request operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/leave_requests/leave_requests/{id}/approve_leave_request/:
+    post:
+      operationId: leave_requests_leave_requests_approve_leave_request_create
+      description: Approve a leave request.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this leave request.
+        required: true
+      tags:
+      - leave_requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeaveRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+  /api/v1/leave_requests/leave_requests/get_leave_requests/:
+    get:
+      operationId: leave_requests_leave_requests_get_leave_requests_retrieve
+      description: |-
+        Get leave requests based on user type.
+
+        Query Parameters:
+            usertype (str, optional): Filter by user type ('recipient' or 'organization')
+      tags:
+      - leave_requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveRequest'
+          description: ''
+  /api/v1/notifications/notifications/:
+    get:
+      operationId: notifications_notifications_list
+      description: Viewset for handling notification operations.
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+          description: ''
+    post:
+      operationId: notifications_notifications_create
+      description: Viewset for handling notification operations.
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/notifications/{id}/:
+    get:
+      operationId: notifications_notifications_retrieve
+      description: Viewset for handling notification operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    put:
+      operationId: notifications_notifications_update
+      description: Viewset for handling notification operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    patch:
+      operationId: notifications_notifications_partial_update
+      description: Viewset for handling notification operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    delete:
+      operationId: notifications_notifications_destroy
+      description: Viewset for handling notification operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/payroll/payrolls/:
+    get:
+      operationId: payroll_payrolls_list
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PayRoll'
+          description: ''
+    post:
+      operationId: payroll_payrolls_create
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      tags:
+      - payroll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+  /api/v1/payroll/payrolls/{id}/:
+    get:
+      operationId: payroll_payrolls_retrieve
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+    put:
+      operationId: payroll_payrolls_update
+      description: Update payroll entry with additional validation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+    patch:
+      operationId: payroll_payrolls_partial_update
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPayRoll'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPayRoll'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPayRoll'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+    delete:
+      operationId: payroll_payrolls_destroy
+      description: |-
+        ViewSet for handling PayRoll operations.
+        Provides different views based on user type (organization or recipient)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/payroll/payrolls/{id}/mark_as_paid/:
+    post:
+      operationId: payroll_payrolls_mark_as_paid_create
+      description: Mark a payroll entry as paid
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payroll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PayRoll'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+  /api/v1/payroll/payrolls/monthly_report/:
+    get:
+      operationId: payroll_payrolls_monthly_report_retrieve
+      description: Get monthly breakdown of payrolls
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
+  /api/v1/payroll/payrolls/summary/:
+    get:
+      operationId: payroll_payrolls_summary_retrieve
+      description: Get summary of payrolls including total amount paid and pending
+      tags:
+      - payroll
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayRoll'
+          description: ''
   /api/v1/profile/organization-profile/:
     get:
       operationId: profile_organization_profile_list
@@ -151,6 +714,21 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/profile/organization-profile/get_organization_recipients/:
+    get:
+      operationId: profile_organization_profile_get_organization_recipients_retrieve
+      description: Retrieve all recipients associated with the authenticated organization.
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationProfile'
+          description: ''
   /api/v1/profile/recipient-profile/:
     get:
       operationId: profile_recipient_profile_list
@@ -298,17 +876,10 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/v1/profile/recipient-profile/{id}/batch_create/:
+  /api/v1/profile/recipient-profile/batch_create/:
     post:
       operationId: profile_recipient_profile_batch_create_create
-      description: Create multiple recipient profiles in a single request.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this recipient profile.
-        required: true
+      description: Viewset for handling recipient profile operations.
       tags:
       - profile
       requestBody:
@@ -485,12 +1056,28 @@ paths:
       operationId: web3auth_login_create
       tags:
       - web3auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EthereumAuth'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EthereumAuth'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EthereumAuth'
+        required: true
       security:
       - jwtAuth: []
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EthereumAuth'
+          description: ''
   /api/v1/web3auth/nonce/{address}/:
     get:
       operationId: web3auth_nonce_retrieve
@@ -507,7 +1094,11 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nonce'
+          description: ''
   /api/v1/web3auth/user/:
     get:
       operationId: web3auth_user_retrieve
@@ -517,7 +1108,11 @@ paths:
       - jwtAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
   /api/v1/web3auth/verify-address/{address}/:
     get:
       operationId: web3auth_verify_address_retrieve
@@ -534,9 +1129,121 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyAddress'
+          description: ''
 components:
   schemas:
+    EthereumAuth:
+      type: object
+      properties:
+        address:
+          type: string
+        signature:
+          type: string
+      required:
+      - address
+      - signature
+    LeaveRequest:
+      type: object
+      description: Serializer for LeaveRequest model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        recipient:
+          allOf:
+          - $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        leave_type:
+          $ref: '#/components/schemas/LeaveTypeEnum'
+        reason:
+          type: string
+        status:
+          $ref: '#/components/schemas/LeaveRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - end_date
+      - id
+      - leave_type
+      - reason
+      - recipient
+      - start_date
+      - updated_at
+    LeaveRequestStatusEnum:
+      enum:
+      - pending
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `approved` - Approved
+        * `rejected` - Rejected
+    LeaveTypeEnum:
+      enum:
+      - sick
+      - vacation
+      - personal
+      - other
+      type: string
+      description: |-
+        * `sick` - Sick Leave
+        * `vacation` - Vacation Leave
+        * `personal` - Personal Leave
+        * `other` - Other
+    Nonce:
+      type: object
+      properties:
+        wallet_address:
+          type: string
+          maxLength: 42
+      required:
+      - wallet_address
+    Notification:
+      type: object
+      description: Serializer for the Notification model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        message:
+          type: string
+        is_read:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - is_read
+      - message
+      - type
+      - user
     OrganizationProfile:
       type: object
       description: Serializer for OrganizationProfile model.
@@ -551,6 +1258,10 @@ components:
           type: string
           format: email
           maxLength: 254
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
         organization_address:
           type: string
           nullable: true
@@ -562,6 +1273,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        total_recipients:
+          type: integer
+          description: |-
+            Get the total number of recipients in the organization.
+            Returns:
+                int: The total number of recipients
           readOnly: true
         created_at:
           type: string
@@ -577,7 +1295,61 @@ components:
       - id
       - name
       - recipients
+      - total_recipients
       - updated_at
+      - user
+    PatchedLeaveRequest:
+      type: object
+      description: Serializer for LeaveRequest model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        recipient:
+          allOf:
+          - $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        leave_type:
+          $ref: '#/components/schemas/LeaveTypeEnum'
+        reason:
+          type: string
+        status:
+          $ref: '#/components/schemas/LeaveRequestStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedNotification:
+      type: object
+      description: Serializer for the Notification model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        message:
+          type: string
+        is_read:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
     PatchedOrganizationProfile:
       type: object
       description: Serializer for OrganizationProfile model.
@@ -592,6 +1364,10 @@ components:
           type: string
           format: email
           maxLength: 254
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
         organization_address:
           type: string
           nullable: true
@@ -604,6 +1380,13 @@ components:
           items:
             $ref: '#/components/schemas/RecipientProfile'
           readOnly: true
+        total_recipients:
+          type: integer
+          description: |-
+            Get the total number of recipients in the organization.
+            Returns:
+                int: The total number of recipients
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -611,6 +1394,54 @@ components:
         updated_at:
           type: string
           format: date-time
+          readOnly: true
+    PatchedPayRoll:
+      type: object
+      description: Serializer for the PayRoll model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        recipient:
+          type: integer
+        recipient_details:
+          allOf:
+          - $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        organization:
+          type: integer
+        organization_details:
+          allOf:
+          - $ref: '#/components/schemas/OrganizationProfile'
+          readOnly: true
+        amount:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Amount in smallest currency unit (e.g., cents for USD)
+        batch_reference:
+          type: string
+          nullable: true
+          maxLength: 50
+        description:
+          type: string
+        date:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        paid_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        status:
+          $ref: '#/components/schemas/PayRollStatusEnum'
+        is_paid:
+          type: boolean
           readOnly: true
     PatchedRecipientProfile:
       type: object
@@ -626,8 +1457,13 @@ components:
           type: string
           format: email
           maxLength: 254
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
         organization:
           type: integer
+          readOnly: true
         recipient_ethereum_address:
           type: string
           maxLength: 42
@@ -635,6 +1471,17 @@ components:
           type: string
           nullable: true
           maxLength: 15
+        salary:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        position:
+          type: string
+          nullable: true
+          maxLength: 100
+        status:
+          $ref: '#/components/schemas/RecipientProfileStatusEnum'
         created_at:
           type: string
           format: date-time
@@ -649,6 +1496,75 @@ components:
         email:
           type: string
           format: email
+    PayRoll:
+      type: object
+      description: Serializer for the PayRoll model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        recipient:
+          type: integer
+        recipient_details:
+          allOf:
+          - $ref: '#/components/schemas/RecipientProfile'
+          readOnly: true
+        organization:
+          type: integer
+        organization_details:
+          allOf:
+          - $ref: '#/components/schemas/OrganizationProfile'
+          readOnly: true
+        amount:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          description: Amount in smallest currency unit (e.g., cents for USD)
+        batch_reference:
+          type: string
+          nullable: true
+          maxLength: 50
+        description:
+          type: string
+        date:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        paid_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        status:
+          $ref: '#/components/schemas/PayRollStatusEnum'
+        is_paid:
+          type: boolean
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - date
+      - id
+      - is_paid
+      - organization
+      - organization_details
+      - paid_at
+      - recipient
+      - recipient_details
+    PayRollStatusEnum:
+      enum:
+      - pending
+      - completed
+      - failed
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `completed` - Completed
+        * `failed` - Failed
     RecipientProfile:
       type: object
       description: Serializer for RecipientProfile model.
@@ -663,8 +1579,13 @@ components:
           type: string
           format: email
           maxLength: 254
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
         organization:
           type: integer
+          readOnly: true
         recipient_ethereum_address:
           type: string
           maxLength: 42
@@ -672,6 +1593,17 @@ components:
           type: string
           nullable: true
           maxLength: 15
+        salary:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        position:
+          type: string
+          nullable: true
+          maxLength: 100
+        status:
+          $ref: '#/components/schemas/RecipientProfileStatusEnum'
         created_at:
           type: string
           format: date-time
@@ -688,6 +1620,72 @@ components:
       - organization
       - recipient_ethereum_address
       - updated_at
+      - user
+    RecipientProfileStatusEnum:
+      enum:
+      - active
+      - on_leave
+      type: string
+      description: |-
+        * `active` - Active
+        * `on_leave` - On Leave
+    TypeEnum:
+      enum:
+      - recipientAdded
+      - recipientRemoved
+      - recipientUpdated
+      - organizationUpdated
+      - organizationAdded
+      - organizationRemoved
+      - login
+      type: string
+      description: |-
+        * `recipientAdded` - Recipient Added
+        * `recipientRemoved` - Recipient Removed
+        * `recipientUpdated` - Recipient Updated
+        * `organizationUpdated` - Organization Updated
+        * `organizationAdded` - Organization Added
+        * `organizationRemoved` - Organization Removed
+        * `login` - Login
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        wallet_address:
+          type: string
+          nullable: true
+          maxLength: 42
+        user_type:
+          $ref: '#/components/schemas/UserTypeEnum'
+      required:
+      - id
+      - username
+    UserTypeEnum:
+      enum:
+      - recipient
+      - organization
+      - both
+      type: string
+      description: |-
+        * `recipient` - Recipient
+        * `organization` - Organization
+        * `both` - Both
+    VerifyAddress:
+      type: object
+      properties:
+        wallet_address:
+          type: string
+          maxLength: 42
+      required:
+      - wallet_address
     WaitlistEntry:
       type: object
       properties:
