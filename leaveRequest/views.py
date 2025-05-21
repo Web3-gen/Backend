@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, serializers
 from rest_framework.decorators import action
 from user_profile.views import IsOrganization, IsRecipient
+from user_profile.models import RecipientProfile
 
 
 
@@ -37,11 +38,22 @@ class LeaveRequestView(viewsets.ModelViewSet):
         """
         Ensure recipient can only create leave requests for their own account
         """
-        if not self.request.user.is_recipient:
+        try:
+            if not self.request.user.is_recipient:
+                raise serializers.ValidationError(
+                    "User must have recipient privileges to create leave requests"
+                )
+                
+            # Get the recipient profile for the user
+            recipient_profile = RecipientProfile.objects.get(user=self.request.user)
+            
+            # Save with the recipient profile instead of the user
+            serializer.save(recipient=recipient_profile)
+            
+        except RecipientProfile.DoesNotExist:
             raise serializers.ValidationError(
-                "User must have recipient privileges to create leave requests"
+                {"detail": "No recipient profile found for this user"}
             )
-        serializer.save(recipient=self.request.user)
     
 
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
