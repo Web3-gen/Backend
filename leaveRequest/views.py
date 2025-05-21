@@ -43,8 +43,7 @@ class LeaveRequestView(viewsets.ModelViewSet):
                 raise serializers.ValidationError(
                     "User must have recipient privileges to create leave requests"
                 )
-                
-            # Get the recipient profile for the user
+
             recipient_profile = RecipientProfile.objects.get(user=self.request.user)
             
             # Save with the recipient profile instead of the user
