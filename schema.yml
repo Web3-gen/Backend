@@ -503,7 +503,7 @@ paths:
   /api/v1/payroll/payrolls/{id}/mark_as_paid/:
     post:
       operationId: payroll_payrolls_mark_as_paid_create
-      description: Mark a payroll entry as paid
+      description: Mark payroll as paid and notify recipient
       parameters:
       - in: path
         name: id
@@ -1634,6 +1634,10 @@ components:
       - organizationAdded
       - organizationRemoved
       - login
+      - payrollCreated
+      - payrollUpdated
+      - payrollPaid
+      - payrollDeleted
       type: string
       description: |-
         * `recipientAdded` - Recipient Added
@@ -1643,6 +1647,10 @@ components:
         * `organizationAdded` - Organization Added
         * `organizationRemoved` - Organization Removed
         * `login` - Login
+        * `payrollCreated` - Payroll Created
+        * `payrollUpdated` - Payroll Updated
+        * `payrollPaid` - Payroll Paid
+        * `payrollDeleted` - Payroll Deleted
     User:
       type: object
       properties:

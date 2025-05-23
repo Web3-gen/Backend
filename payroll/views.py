@@ -9,6 +9,7 @@ from drf_spectacular.utils import extend_schema_view, extend_schema
 from .models import PayRoll
 from .serializers import PayRollSerializer
 from user_profile.models import RecipientProfile, OrganizationProfile
+from notifications.models import Notification
 
 
 @extend_schema_view(
@@ -47,11 +48,18 @@ class PayRollViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         """
-        Ensure organization can only create payrolls for their own account
+        Create payroll and notify recipient
         """
         try:
             org_profile = OrganizationProfile.objects.get(user=self.request.user)
-            serializer.save(organization=org_profile)
+            payroll = serializer.save(organization=org_profile)
+
+            # Create notification for recipient
+            Notification.objects.create(
+                user=payroll.recipient.user,
+                type="payrollCreated",
+                message=f"New payroll of {payroll.amount} created by {org_profile.organization_name}",
+            )
         except OrganizationProfile.DoesNotExist:
             raise PermissionError("Only organizations can create payroll entries")
 
@@ -113,10 +121,21 @@ class PayRollViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    def perform_update(self, serializer):
+        """
+        Update payroll and notify recipient
+        """
+        payroll = serializer.save()
+        Notification.objects.create(
+            user=payroll.recipient.user,
+            type="payrollUpdated",
+            message=f"Your payroll of {payroll.amount} has been updated",
+        )
+
     @action(detail=True, methods=["post"])
     def mark_as_paid(self, request, pk=None):
         """
-        Mark a payroll entry as paid
+        Mark payroll as paid and notify recipient
         """
         payroll = self.get_object()
         if payroll.is_paid:
@@ -130,5 +149,23 @@ class PayRollViewSet(viewsets.ModelViewSet):
         payroll.status = "completed"
         payroll.save()
 
+        # Create notification for payment
+        Notification.objects.create(
+            user=payroll.recipient.user,
+            type="payrollPaid",
+            message=f"Payment of {payroll.amount} has been processed",
+        )
+
         serializer = self.get_serializer(payroll)
         return Response(serializer.data)
+
+    def perform_destroy(self, instance):
+        """
+        Delete payroll and notify recipient
+        """
+        Notification.objects.create(
+            user=instance.recipient.user,
+            type="payrollDeleted",
+            message=f"Payroll of {instance.amount} has been cancelled",
+        )
+        instance.delete()
