@@ -94,4 +94,4 @@ class VerifyAddressView(GenericAPIView):
                 {"exists": True, "user_type": user.user_type}, status=status.HTTP_200_OK
             )
         except User.DoesNotExist:
-            return Response({"exists": False}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"exists": False}, status=status.HTTP_200_OK)
