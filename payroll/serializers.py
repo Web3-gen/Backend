@@ -1,61 +1,57 @@
 from rest_framework import serializers
 from .models import PayRoll
-from user_profile.serializers import RecipientProfileSerializer, OrganizationProfileSerializer
+from user_profile.serializers import (
+    RecipientProfileSerializer,
+    OrganizationProfileSerializer,
+)
+
 
 class PayRollSerializer(serializers.ModelSerializer):
     """
     Serializer for the PayRoll model.
     """
-    recipient_details = RecipientProfileSerializer(source='recipient', read_only=True)
-    organization_details = OrganizationProfileSerializer(source='organization', read_only=True)
-    
+
+    recipient_details = RecipientProfileSerializer(source="recipient", read_only=True)
+    organization_details = OrganizationProfileSerializer(
+        source="organization", read_only=True
+    )
+
     class Meta:
         model = PayRoll
         fields = [
-            'id',
-            'recipient',
-            'recipient_details',
-            'organization',
-            'organization_details',
-            'amount',
-            'batch_reference',
-            'description',
-            'date',
-            'created_at',
-            'paid_at',
-            'status',
-            'is_paid'
+            "id",
+            "recipient",
+            "recipient_details",
+            "organization",
+            "organization_details",
+            "amount",
+            "batch_reference",
+            "description",
+            "date",
+            "created_at",
+            "paid_at",
+            "status",
+            "is_paid",
         ]
-        read_only_fields = ['id', 'created_at', 'paid_at', 'is_paid']
-
-    def validate_amount(self, value):
-        """
-        Validate that amount is positive
-        """
-        if value <= 0:
-            raise serializers.ValidationError("Amount must be greater than zero")
-        return value
+        read_only_fields = [
+            "id",
+            "created_at",
+            "paid_at",
+            "is_paid",
+            "recipient_details",
+            "organization_details",
+        ]
 
     def validate(self, data):
         """
-        Custom validation to ensure organization can't create duplicate payrolls
-        for the same recipient on the same date (only checking pending or paid status)
+        Custom validation - Removed duplicate payroll restriction
+        Organizations can now create multiple payrolls for the same recipient on the same date
         """
-        recipient = data.get('recipient')
-        organization = data.get('organization')
-        date = data.get('date')
-        
-        # Check if this is an update operation
-        instance = self.instance
-        if instance is None:  # This is a create operation
-            if PayRoll.objects.filter(
-                recipient=recipient,
-                organization=organization,
-                date=date,
-                status__in=['pending', 'completed']  # Use status__in to check multiple values
-            ).exists():
-                raise serializers.ValidationError(
-                    "A pending or paid payroll entry already exists for this recipient on this date"
-                )
-        
+        # You can add other validation rules here if needed
+        # For example, validate amount is positive, date is not in future, etc.
+
+        amount = data.get("amount")
+        if amount and amount <= 0:
+            raise serializers.ValidationError("Amount must be greater than 0")
+
         return data
