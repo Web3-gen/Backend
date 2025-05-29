@@ -58,7 +58,7 @@ class PayRollViewSet(viewsets.ModelViewSet):
             Notification.objects.create(
                 user=payroll.recipient.user,
                 type="payrollCreated",
-                message=f"New payroll of {payroll.amount} created by {org_profile.organization_name}",
+                message=f"New payroll of {payroll.amount} created by {org_profile.name}",
             )
         except OrganizationProfile.DoesNotExist:
             raise PermissionError("Only organizations can create payroll entries")
